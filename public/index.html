@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soccer Pitch Tracker</title>
+  </head>
+  <body>
+    <h1>Soccer Pitch Tracker</h1>
+    <form id="tracker-form">
+      <label for="date">Data:</label>
+      <input type="date" id="date" name="date" required />
+      <label for="hours">Ore di luce utilizzate:</label>
+      <input type="number" id="hours" name="hours" step="0.5" required />
+      <label for="team">Chi ha utilizzato:</label>
+      <select id="team" name="team" required>
+        <option value="Under8">Under8</option>
+        <option value="Under10">Under10</option>
+        <option value="Under12">Under12</option>
+        <option value="Under14">Under14</option>
+        <option value="Open">Open</option>
+      </select>
+      <button type="submit">Aggiungi</button>
+    </form>
+
+    <button id="export-btn">Esporta in Excel</button>
+
+    <ul id="entries"></ul>
+
+    <script>
+      document
+        .getElementById("tracker-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const date = document.getElementById("date").value;
+          const hours = document.getElementById("hours").value;
+          const team = document.getElementById("team").value;
+
+          fetch("/data", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ date, hours, team }),
+          })
+            .then((response) => response.text())
+            .then((message) => {
+              alert(message);
+              loadEntries();
+            });
+        });
+
+      document
+        .getElementById("export-btn")
+        .addEventListener("click", function () {
+          window.location.href = "/export";
+        });
+
+      function loadEntries() {
+        fetch("/data")
+          .then((response) => response.json())
+          .then((entries) => {
+            const list = document.getElementById("entries");
+            list.innerHTML = "";
+            entries.forEach((entry) => {
+              const li = document.createElement("li");
+              li.textContent = `${entry.date}: ${entry.hours} ore, ${entry.team}`;
+              list.appendChild(li);
+            });
+          });
+      }
+
+      loadEntries();
+    </script>
+  </body>
+</html>
