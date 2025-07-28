@@ -14,7 +14,7 @@
     "@fastify/view": "^8.0.0",
     "express": "^4.17.1",
     "body-parser": "^1.19.0",
-    "exceljs": "^4.2.0"
+    "exceljs": "^4.2.0",
     "axios": "^1.6.0"
   },
   "engines": {
